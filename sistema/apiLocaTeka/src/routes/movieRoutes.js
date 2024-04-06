@@ -1,11 +1,13 @@
 const express = require('express');
 const Movie = require('../models/Movie');
+const MovieRentalRoute = require('../routes/movieRentalRoute');
 const upload = require('./upload');
 
 const movieRentalRoute = require('./movieRentalRoute');
 
 class MovieRoutes {
   constructor() {
+    this.movieRental = MovieRentalRoute;
     this.router = express.Router();
     this.initializeRoutes();
   }
@@ -16,8 +18,6 @@ class MovieRoutes {
     this.router.get('/:id', this.getMovieById);
     this.router.put('/:id', upload.single('imagemCartaz'), this.updateMovie);
     this.router.delete('/:id', this.deleteMovie);
-    this.router.get('/borrow/:id', this.borrowMovie);
-    this.router.get('/return-borrow/:id', this.returnBorrowMovie);
   }
 
   async createMovie(req, res) {
@@ -82,44 +82,6 @@ class MovieRoutes {
       res.send({ message: 'Filme deletado com sucesso!' });
     } catch (error) {
       res.status(500).send(error);
-    }
-  }
-
-  async borrowMovie(req, res) {
-    const updates = req.body;
-    if (req.file) {
-      updates.imagemCartaz = req.file.path;
-    }
-    try {
-      const movie = await Movie.findById(req.params.id);
-      if (!movie) {
-        return res.status(404).send({ message: 'Filme não encontrado!' });
-      }
-  
-      if(movie.qtdDvds > 0){
-        await Movie.Update(req.params.id, { $inc: { qtdDvds: -1 } }, { new: true });
-      }
-      res.send(movie);
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  }
-
-  async returnBorrowMovie(req, res) {
-    const updates = req.body;
-    if (req.file) {
-      updates.imagemCartaz = req.file.path;
-    }
-    try {
-      const movie = await Movie.findById(req.params.id);
-      if (!movie) {
-        return res.status(404).send({ message: 'Filme não encontrado!' });
-      }
-  
-      await Movie.Update(req.params.id, { $inc: { qtdDvds: 1 } }, { new: true });
-      res.send(movie);
-    } catch (error) {
-      res.status(400).send(error);
     }
   }
 }

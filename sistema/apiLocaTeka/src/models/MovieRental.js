@@ -6,6 +6,10 @@ const movieRentalSchema = new mongoose.Schema({
     ref: 'Movie',
     required: true,
   },
+  nameMovieBorowed: {
+    type: String,
+    required: true,
+  },
   idUserBorow: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

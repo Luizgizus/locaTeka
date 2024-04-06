@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 
+require('dotenv').config();
+
 const jwtSecret = process.env.JWT_SECRET
 
 const requireAdmin = (req, res, next) => {

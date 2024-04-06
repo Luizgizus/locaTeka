@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+require('dotenv').config();
 
 const jwtSecret = process.env.JWT_SECRET
 
@@ -26,6 +27,7 @@ class AuthRoutes {
   }
 
   async loginUser(req, res) {
+    console.log(jwtSecret)
     const { email, password } = req.body;
 
     try {

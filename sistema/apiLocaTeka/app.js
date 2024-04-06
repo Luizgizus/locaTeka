@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRoutes = require('./src/routes/userRoutes');
 const movieRoutes = require('./src/routes/movieRoutes');
+const movieRentalRoutes = require('./src/routes/movieRentalRoute');
 const authRoutes = require('./src/routes/authRoutes');
+const cors = require('cors');
+
 require('dotenv').config();
 
 
@@ -14,7 +17,7 @@ const requireAdmin = require('./src/middleware/adminMiddleware');
 class Server {
   constructor() {
     this.app = express();
-    this.port = 3000;
+    this.port = process.env.PORT;
     this.databaseUrl = 'mongodb://localhost:27017/locateka';
   }
 
@@ -31,12 +34,19 @@ class Server {
   }
 
   middlewares() {
+    const corsOptions = {
+      origin: 'http://localhost:3000',
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    }
+
+    this.app.use(cors(corsOptions));
     this.app.use(bodyParser.json());
-    this.app.use(requireAuth);
+    //this.app.use(requireAuth);
     this.app.use('/movies', requireAdmin);
     
     this.app.use('/users', userRoutes);
     this.app.use('/movies', movieRoutes);
+    this.app.use('/movie-rental', movieRentalRoutes.router);
     this.app.use('/auth', authRoutes);
   }
 
